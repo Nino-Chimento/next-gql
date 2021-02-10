@@ -1,26 +1,15 @@
 import styles from "../styles/Home.module.css";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { client } from "../apollo/ApolloClient";
+import Card from "./card";
 
 export default function Home({ launches }) {
-  console.log(launches);
   return (
     <div className={styles.container}>
       <h1>SpaceX launches</h1>
       <div className={styles.grid}>
         {launches.map((launch) => {
-          return (
-            <a
-              key={launch.id}
-              href={launch.links.video_link}
-              className={styles.card}
-            >
-              <h3>{launch.mission_name}</h3>
-              <p>
-                <strong>Launch Date:</strong>{" "}
-                {new Date(launch.launch_date_local).toLocaleDateString("en-US")}
-              </p>
-            </a>
-          );
+          return <Card launch={launch} />;
         })}
       </div>
     </div>
@@ -28,10 +17,6 @@ export default function Home({ launches }) {
 }
 
 export async function getStaticProps() {
-  const client = new ApolloClient({
-    uri: "https://api.spacex.land/graphql/",
-    cache: new InMemoryCache(),
-  });
   const { data } = await client.query({
     query: gql`
       query GetLaunches {
